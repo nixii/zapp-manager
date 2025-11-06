@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="index.css" />
+	</head>
+
+	<body>
+		<div id="content">
+
+			<!---- Main content ---->
+			<!-- main title -->
+			<h1 id="title">zapp! Password Manager</h1>
+
+			<!-- section with passwords & buttons -->
+			<div id="middle">
+				<div id="buttons">
+					<button id="add" class="actionbutton">Add</button>
+					<button id="remove" class="actionbutton">Remove</button>
+					<button id="edit" class="actionbutton">Edit</button>
+					<button id="view" class="actionbutton">View</button>
+				</div>
+				<div id="passwords">
+				</div>
+			</div>
+
+			<!---- Floating sections ---->
+			<!-- The form to make a new password -->
+			<div id="add-frame" class="hidden form">
+				<p>Add</p>
+				<button class="close">X</button>
+				<input type="text" class="popup-input-align" placeholder="username" id="add-username-input" required="true">
+				<input type="text" class="popup-input-align" placeholder="website" id="add-website-input" required="true">
+				<input type="email" class="popup-input-align" placeholder="email" id="add-email-input">
+				<input type="password" class="popup-input-align" placeholder="password" id="add-password-input" required="true">
+				<input type="password" class="popup-input-align" placeholder="MASTER PASSWORD" id="add-master-input" required="true">
+				<input type="submit" class="popup-input-align-submit" id="add-submit" value="Add">
+			</div>
+
+			<!-- The form to edit a password -->
+			<div id="edit-frame" class="hidden form">
+				<p>Edit</p>
+				<button class="close">X</button>
+				<input type="text" class="popup-input-align" placeholder="new username" id="edit-username-input">
+				<input type="text" class="popup-input-align" placeholder="new website" id="edit-website-input">
+				<input type="email" class="popup-input-align" placeholder="new email" id="edit-email-input">
+				<input type="password" class="popup-input-align" placeholder="new password" id="edit-password-input">
+				<input type="password" class="popup-input-align" placeholder="MASTER PASSWORD" id="edit-master-input" required="true">
+				<input type="submit" class="popup-input-align-submit" id="edit-submit" value="Edit">
+			</div>
+
+			<!-- Show a password -->
+			<div id="view-frame" class="hidden form">
+				<p>View</p>
+				<button class="close">X</button>
+				<p id="username">USR: <span id="content"></span></p>
+				<p id="password">PWD: <span id="content"></span></p>
+			</div>
+
+			<!-- When an error occurs -->
+			<div id="error-frame" class="hidden">
+				<button class="close">X</button>
+				<p>An error has occurred</p>
+				<p id="errormsg">unknown error</p>
+			</div>
+
+			<!---- Code ---->
+			<script src="index.js">
+			</script>
+		</div>
+	</body>
+</html>

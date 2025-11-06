@@ -1,0 +1,19 @@
+{
+	"manifest_version": 2,
+	"name": "Zapp",
+	"version": "0.0.0",
+
+	"description": "A Firefox tool to interact with the Zapp WIP password manager",
+
+	"icons": {
+		"48": "icons/example.png"
+	},
+
+	"permissions": ["activeTab"],
+
+	"browser_action": {
+		"default_icon": "icons/example.png",
+		"default_title": "Open GUI",
+		"default_popup": "popup/view/index.html"
+	}
+}
