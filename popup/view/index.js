@@ -79,7 +79,7 @@ function httpAsync(endpoint, method, data, callback) {
 
 	console.log(JSON.stringify(data));
 
-	xmlHttp.open(method, `http://localho.st:2327/${endpoint}/`, true);
+	xmlHttp.open(method, `http://localhost:2327/${endpoint}/`, true);
 	xmlHttp.setRequestHeader("Content-Type", "application/json");
 	xmlHttp.send(JSON.stringify(data));
 }
