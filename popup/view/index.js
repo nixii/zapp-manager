@@ -19,6 +19,44 @@ const errors = {
 	MoreThanOneSelected: "You can only view or modify one password at a time."
 };
 
+// objects
+const removeButton = document.getElementById('remove');
+
+const errorFrame = document.getElementById('error-frame');
+const errorFrameClose = errorFrame.getElementsByClassName('close')[0];
+const errorMsg = document.getElementById('errormsg');
+
+const editButton = document.getElementById('edit');
+const editFrame = document.getElementById('edit-frame');
+const editFrameClose = editFrame.getElementsByClassName('close')[0];
+
+const editSubmit = document.getElementById('edit-submit');
+const editUsernameInput = document.getElementById('edit-username-input');
+const editWebsiteInput = document.getElementById('edit-website-input');
+const editEmailInput = document.getElementById('edit-email-input');
+const editPasswordInput = document.getElementById('edit-password-input');
+const editMasterInput = document.getElementById('edit-master-input');
+
+const addButton = document.getElementById('add');
+const addFrame = document.getElementById('add-frame');
+const addFrameClose = addFrame.getElementsByClassName('close')[0];
+
+const addSubmit = document.getElementById('add-submit');
+const addUsernameInput = document.getElementById('add-username-input');
+const addWebsiteInput = document.getElementById('add-website-input');
+const addEmailInput = document.getElementById('add-email-input');
+const addPasswordInput = document.getElementById('add-password-input');
+const addMasterInput = document.getElementById('add-master-input');
+
+const viewEmail = document.getElementById('view-email');
+const viewEmailContent = viewEmail.getElementsByClassName('content')[0];
+const viewPassword = document.getElementById('view-password');
+const viewPasswordContent = viewPassword.getElementsByClassName('content')[0];
+const viewButton = document.getElementById('view');
+const viewFrame = document.getElementById('view-frame');
+const viewFrameClose = viewFrame.getElementsByClassName("close")[0];
+
+
 // globals
 var passwords = {}
 
@@ -66,7 +104,7 @@ function newPasswordItem(site, username) {
 	// Create the html element
 	let pwditem = passwordItemTemplate.replace("#s", site).replace("#u", username);
 	let obj = document.createElement('div');
-	obj.className += "passworditem"
+	obj.className += "passworditem";
 	obj.innerHTML = pwditem;
 
 	// Save the html element
@@ -99,84 +137,88 @@ function getMasterPassword() {
 // newPasswordItem("googleeee", "hsdajif")
 // console.log(getBy({tag: "u-nixii s-www.google.com"}, "u-"))
 // Connect removing a password
-{
-	document.getElementById("remove").addEventListener('click', function(e) {
-		let items = document.getElementsByClassName("passworditem selected");
-		for (let i = 0; i < items.length; i++) {
-			items[i].remove();
-		}
-	});
-}
+removeButton.addEventListener('click', function(e) {
+	let items = document.getElementsByClassName("passworditem selected");
+	for (let i = 0; i < items.length; i++) {
+		items[i].remove();
+	}
+});
 
 // When you edit a password
-{
-	document.getElementById("edit").addEventListener('click', function() {
-		if (document.getElementsByClassName('selected').length == 0)
-			return;
-		else if (document.getElementsByClassName('selected').length > 1) {
-			document.getElementById('error-frame').getElementById('errormsg').innerHTML = errors.MoreThanOneSelected;
-			document.getElementById('error-frame').classList.remove('hidden');
-			return;
-		}
-		document.getElementById('edit-frame').classList.remove('hidden');
-	});
-	document.getElementById("edit-frame").getElementsByClassName("close")[0].addEventListener('click', function() {
-		document.getElementById('edit-frame').classList.add('hidden');
-	});
-}
+editButton.addEventListener('click', function() {
+	if (document.getElementsByClassName('selected').length == 0)
+		return;
+	else if (document.getElementsByClassName('selected').length > 1) {
+		errorMsg.innerHTML = errors.MoreThanOneSelected;
+		errorFrame.classList.remove('hidden');
+		return;
+	}
+	editFrame.classList.remove('hidden');
+});
+editFrameClose.addEventListener('click', function() {
+	editFrame.classList.add('hidden');
+});
 
 // When you add a password
-{
-	document.getElementById('add').addEventListener('click', function() {
-		document.getElementById('add-frame').classList.remove('hidden');
+addButton.addEventListener('click', function() {
+	addFrame.classList.remove('hidden');
+});
+addFrameClose.addEventListener('click', function() {
+	addFrame.classList.add('hidden');
+});
+addSubmit.addEventListener('click', function() {
+	let req = {
+		Username: addUsernameInput.value,
+		Website: addWebsiteInput.value,
+		Password: addPasswordInput.value,
+		MasterPassword: addMasterInput.value,
+	}
+	if (addEmailInput.value.trim().length != 0) {
+		req.Email = addEmailInput.value.trim();
+	}
+
+	httpAsync("pwd", "PUT", req, (response) => {
+		newPasswordItem(req.Website, req.Username);
 	});
-	document.getElementById("add-frame").getElementsByClassName("close")[0].addEventListener('click', function() {
-		document.getElementById('add-frame').classList.add('hidden');
-	});
+});
+
+// View a selected password
+function view(s, u) {
+	// TODO: make this
+	httpAsync("pwd", "POST", {
+		MasterPassword: getMasterPassword(),
+		Website: s,
+		Username: u
+	}, (response) => {
+		let json = JSON.parse(response);
+		console.log(json);
+		viewEmailContent.innerHTML = json.Email;
+		viewPasswordContent.innerHTML = json.Password;
+		viewFrame.classList.remove('hidden');
+	})
 }
 
 // When you view a password
-{
-	// View a selected password
-	function view(s, u) {
-		// TODO: make this
-		httpAsync("pwd", "POST", {
-			MasterPassword: getMasterPassword(),
-			Website: s,
-			Username: u
-		}, (response) => {
-			let json = JSON.parse(response);
-			console.log(json);
-			document.getElementById('view-email').getElementsByClassName('content')[0].innerHTML = json.Email
-			document.getElementById('view-password').getElementsByClassName('content')[0].innerHTML = json.Password
-		})
+viewButton.addEventListener('click', function() {
+	if (document.getElementsByClassName('selected').length == 0)
+		return;
+	else if (document.getElementsByClassName('selected').length > 1) {
+		errorMsg.innerHTML = errors.MoreThanOneSelected;
+		errorFrame.classList.remove('hidden');
+		return;
+	} else {
+		let val = document.getElementsByClassName('selected')[0];
+		view(val.getElementsByClassName('site')[0].innerHTML, val.getElementsByClassName('username')[0].innerHTML);
 	}
-
-	// Connect the events
-	document.getElementById('view').addEventListener('click', function() {
-		if (document.getElementsByClassName('selected').length == 0)
-			return;
-		else if (document.getElementsByClassName('selected').length > 1) {
-			document.getElementById('error-frame').getElementById('errormsg').innerHTML = errors.MoreThanOneSelected;
-			document.getElementById('error-frame').classList.remove('hidden');
-			return;
-		} else {
-			let val = document.getElementsByClassName('selected')[0];
-			view(val.getElementsByClassName('site')[0].innerHTML, val.getElementsByClassName('username')[0].innerHTML);
-		}
-		document.getElementById('view-frame').classList.remove('hidden');
-	});
-	document.getElementById("view-frame").getElementsByClassName("close")[0].addEventListener('click', function() {
-		document.getElementById('view-frame').classList.add('hidden');
-	});
-}
+});
+viewFrameClose.addEventListener('click', function() {
+	viewFrame.classList.add('hidden');
+});
 
 // Hide the error frame
-{
-	document.getElementById('error-frame').getElementsByClassName('close')[0].addEventListener('click', function() {
-		document.getElementById('error-frame').classList.add('hidden');
-	});
-}
+errorFrameClose.addEventListener('click', function() {
+	errorFrame.classList.add('hidden');
+});
 
 /*
  * Contact the server and load passwords.
@@ -184,38 +226,22 @@ function getMasterPassword() {
 */
 function main() {
 
-	// httpAsync( // test to make a simple password
-	// 	"pwd",
-	// 	"PUT",
-	// 	{
-	// 		MasterPassword: mpwd,
-	// 		Website: "google.com",
-	// 		Username: "nixii",
-	// 		Password: "123",
-	// 		Email: "nixii@nixii.nixii"
-	// 	},
-	// 	() => {}
-	// )
-
 	// load passwords
 	httpAsync(
-		"allpwds", 
-		"POST",
-		{
-			MasterPassword: getMasterPassword()
-		}, 
-		function(response) {
-			let res = JSON.parse(response);
-			for (const site in res) {
-				for (const user in res[site]) {
-					newPasswordItem(site, res[site][user]);
-				}
-			}
-		} // ick so much indentation-
-	);
-}
 
-/*
- * actually run
-*/
-main();
+	"allpwds", 
+	"POST",
+	{
+		MasterPassword: getMasterPassword()
+	}, 
+	function(response) {
+		let res = JSON.parse(response);
+		for (const site in res) {
+			for (const user in res[site]) {
+				newPasswordItem(site, res[site][user]);
+			}
+		}
+	} // ick so much indentation-
+	);
+
+} main();
