@@ -26,16 +26,15 @@ const errorFrame = document.getElementById('error-frame');
 const errorFrameClose = errorFrame.getElementsByClassName('close')[0];
 const errorMsg = document.getElementById('errormsg');
 
-const editButton = document.getElementById('edit');
-const editFrame = document.getElementById('edit-frame');
-const editFrameClose = editFrame.getElementsByClassName('close')[0];
+// const editButton = document.getElementById('edit');
+// const editFrame = document.getElementById('edit-frame');
+// const editFrameClose = editFrame.getElementsByClassName('close')[0];
 
 const editSubmit = document.getElementById('edit-submit');
 const editUsernameInput = document.getElementById('edit-username-input');
 const editWebsiteInput = document.getElementById('edit-website-input');
 const editEmailInput = document.getElementById('edit-email-input');
 const editPasswordInput = document.getElementById('edit-password-input');
-const editMasterInput = document.getElementById('edit-master-input');
 
 const addButton = document.getElementById('add');
 const addFrame = document.getElementById('add-frame');
@@ -46,7 +45,6 @@ const addUsernameInput = document.getElementById('add-username-input');
 const addWebsiteInput = document.getElementById('add-website-input');
 const addEmailInput = document.getElementById('add-email-input');
 const addPasswordInput = document.getElementById('add-password-input');
-const addMasterInput = document.getElementById('add-master-input');
 
 const viewEmail = document.getElementById('view-email');
 const viewEmailContent = viewEmail.getElementsByClassName('content')[0];
@@ -56,6 +54,12 @@ const viewButton = document.getElementById('view');
 const viewFrame = document.getElementById('view-frame');
 const viewFrameClose = viewFrame.getElementsByClassName("close")[0];
 
+const masterFrame = document.getElementById('master-frame');
+const masterFrameClose = masterFrame.getElementsByClassName('close')[0];
+
+const masterInput = document.getElementById('master-input');
+const masterSubmit = document.getElementById('master-submit');
+let mpwd = "";
 
 // globals
 var passwords = {}
@@ -128,9 +132,9 @@ function newPasswordItem(site, username) {
 
 // get a master password
 function getMasterPassword() {
+
 	// get master password
-	let mpwd = "simplex2";
-	return mpwd;
+	masterFrame.classList.remove("hidden");
 }
 
 // testing
@@ -140,24 +144,34 @@ function getMasterPassword() {
 removeButton.addEventListener('click', function(e) {
 	let items = document.getElementsByClassName("passworditem selected");
 	for (let i = 0; i < items.length; i++) {
-		items[i].remove();
+		let item = items[i];
+		let site = item.getElementsByClassName("site")[0].innerHTML;
+		let username = item.getElementsByClassName("username")[0].innerHTML;
+		httpAsync('pwd', 'DELETE', {
+			Website: site,
+			Username: username,
+			MasterPassword: mpwd
+		}, () =>  {
+			console.log("pwd removed successfully");
+			item.remove();
+		});
 	}
 });
 
 // When you edit a password
-editButton.addEventListener('click', function() {
-	if (document.getElementsByClassName('selected').length == 0)
-		return;
-	else if (document.getElementsByClassName('selected').length > 1) {
-		errorMsg.innerHTML = errors.MoreThanOneSelected;
-		errorFrame.classList.remove('hidden');
-		return;
-	}
-	editFrame.classList.remove('hidden');
-});
-editFrameClose.addEventListener('click', function() {
-	editFrame.classList.add('hidden');
-});
+// editButton.addEventListener('click', function() {
+// 	if (document.getElementsByClassName('selected').length == 0)
+// 		return;
+// 	else if (document.getElementsByClassName('selected').length > 1) {
+// 		errorMsg.innerHTML = errors.MoreThanOneSelected;
+// 		errorFrame.classList.remove('hidden');
+// 		return;
+// 	}
+// 	editFrame.classList.remove('hidden');
+// });
+// editFrameClose.addEventListener('click', function() {
+// 	editFrame.classList.add('hidden');
+// });
 
 // When you add a password
 addButton.addEventListener('click', function() {
@@ -171,7 +185,7 @@ addSubmit.addEventListener('click', function() {
 		Username: addUsernameInput.value,
 		Website: addWebsiteInput.value,
 		Password: addPasswordInput.value,
-		MasterPassword: addMasterInput.value,
+		MasterPassword: mpwd,
 	}
 	if (addEmailInput.value.trim().length != 0) {
 		req.Email = addEmailInput.value.trim();
@@ -180,13 +194,14 @@ addSubmit.addEventListener('click', function() {
 	httpAsync("pwd", "PUT", req, (response) => {
 		newPasswordItem(req.Website, req.Username);
 	});
+
+	addFrame.classList.add('hidden');
 });
 
 // View a selected password
 function view(s, u) {
-	// TODO: make this
 	httpAsync("pwd", "POST", {
-		MasterPassword: getMasterPassword(),
+		MasterPassword: mpwd,
 		Website: s,
 		Username: u
 	}, (response) => {
@@ -220,28 +235,43 @@ errorFrameClose.addEventListener('click', function() {
 	errorFrame.classList.add('hidden');
 });
 
+// master frame
+masterFrameClose.addEventListener('click', function() {
+	masterFrame.classList.add('hidden');
+});
+function submitMpwd() {
+	mpwd = masterInput.value;
+	masterFrame.classList.add('hidden');
+
+	// load passwords
+	httpAsync(
+		"allpwds", 
+		"POST",
+		{
+			MasterPassword: mpwd,
+		}, 
+		function(response) {
+			let res = JSON.parse(response);
+			for (const site in res) {
+				for (const user in res[site]) {
+					newPasswordItem(site, res[site][user]);
+				}
+			}
+		} // ick so much indentation-
+	);
+}
+masterSubmit.addEventListener('click', submitMpwd);
+masterInput.onkeydown = function(e) {
+	if (e.keyCode == 13)
+		submitMpwd();
+}
+
 /*
  * Contact the server and load passwords.
  * useful!
 */
 function main() {
 
-	// load passwords
-	httpAsync(
-
-	"allpwds", 
-	"POST",
-	{
-		MasterPassword: getMasterPassword()
-	}, 
-	function(response) {
-		let res = JSON.parse(response);
-		for (const site in res) {
-			for (const user in res[site]) {
-				newPasswordItem(site, res[site][user]);
-			}
-		}
-	} // ick so much indentation-
-	);
+	getMasterPassword();
 
 } main();

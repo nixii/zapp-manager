@@ -5,6 +5,7 @@ html, body {
 	overflow: hidden;
 	background-color: #666666;
 	color: white;
+	top: 0;
 }
 
 #title {

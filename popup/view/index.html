@@ -17,7 +17,7 @@
 				<div id="buttons">
 					<button id="add" class="actionbutton">Add</button>
 					<button id="remove" class="actionbutton">Remove</button>
-					<button id="edit" class="actionbutton">Edit</button>
+					<!-- <button id="edit" class="actionbutton">Edit</button> -->
 					<button id="view" class="actionbutton">View</button>
 				</div>
 				<div id="passwords">
@@ -33,7 +33,6 @@
 				<input type="text" class="popup-input-align" placeholder="website" id="add-website-input" required="true">
 				<input type="email" class="popup-input-align" placeholder="email" id="add-email-input">
 				<input type="password" class="popup-input-align" placeholder="password" id="add-password-input" required="true">
-				<input type="password" class="popup-input-align" placeholder="MASTER PASSWORD" id="add-master-input" required="true">
 				<input type="submit" class="popup-input-align-submit" id="add-submit" value="Add">
 			</div>
 
@@ -45,8 +44,15 @@
 				<input type="text" class="popup-input-align" placeholder="new website" id="edit-website-input">
 				<input type="email" class="popup-input-align" placeholder="new email" id="edit-email-input">
 				<input type="password" class="popup-input-align" placeholder="new password" id="edit-password-input">
-				<input type="password" class="popup-input-align" placeholder="MASTER PASSWORD" id="edit-master-input" required="true">
 				<input type="submit" class="popup-input-align-submit" id="edit-submit" value="Edit">
+			</div>
+
+			<!-- req master password -->
+			<div id="master-frame" class="hidden form">
+				<p>Master Pwd</p>
+				<button class="close">X</button>
+				<input type="password" class="popup-input-align" placeholder="MASTER PASSWORD" id="master-input" required="true" autofocus>
+				<input type="submit" class="popup-input-align-submit" id="master-submit" value="Submit">
 			</div>
 
 			<!-- Show a password -->
@@ -58,7 +64,7 @@
 			</div>
 
 			<!-- When an error occurs -->
-			<div id="error-frame" class="hidden">
+			<div id="error-frame" class="hidden form">
 				<button class="close">X</button>
 				<p>An error has occurred</p>
 				<p id="errormsg">unknown error</p>
