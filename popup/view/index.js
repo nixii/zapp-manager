@@ -275,3 +275,19 @@ function main() {
 	getMasterPassword();
 
 } main();
+
+/*
+ * Start transfering a password
+ */
+function startTransfer() {
+	if (mpwd == "")
+		return;
+	console.log("started transfer");
+}
+
+// End transferring
+function endTransfer() {
+	if (mpwd == "")
+		return;
+	console.log("ended transfer");
+}
