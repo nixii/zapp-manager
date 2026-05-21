@@ -301,8 +301,8 @@ function endTransfer() {
 			MasterPassword: mpwd,
 			From: document.getElementById("from-ip").value
 		}, 
-		() => {
-		     console.log("ended transfer");
+		(_) => {
+		     console.log("ended transfer successfully, from " + document.getElementById("from-ip").value);
 		}
 	);
 }
