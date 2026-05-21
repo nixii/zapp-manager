@@ -1,15 +1,9 @@
-
-/*
- * please please please ignore this really bad code. I hate JS and webdev.
- * I am thinking I should have just use imgui.
-*/
-
 // consts
 
 /*
 		<div class="passworditem">
 			<p class="site">www.google.com</p>
-			<p class="username">TheTrueBear</p>
+			<p class="username">me</p>
 		</div>
 */
 const passwordItemTemplate = '<p class="site">#s</p><p class="username">#u</p>';
@@ -257,7 +251,7 @@ function submitMpwd() {
 					newPasswordItem(site, res[site][user]);
 				}
 			}
-		} // ick so much indentation-
+		}
 	);
 }
 masterSubmit.addEventListener('click', submitMpwd);
@@ -282,12 +276,33 @@ function main() {
 function startTransfer() {
 	if (mpwd == "")
 		return;
-	console.log("started transfer");
+	httpAsync(
+		"transf",
+		"POST",
+		{
+			Receiving: true,
+			MasterPassword: mpwd,
+			From: document.getElementById("from-ip").value
+		},
+		function(_) {}
+	);
 }
 
 // End transferring
 function endTransfer() {
 	if (mpwd == "")
 		return;
-	console.log("ended transfer");
+
+     httpAsync(
+		"transf", 
+		"POST", 
+		{
+		     Receiving: false,
+			MasterPassword: mpwd,
+			From: document.getElementById("from-ip").value
+		}, 
+		() => {
+		     console.log("ended transfer");
+		}
+	);
 }
