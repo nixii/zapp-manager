@@ -276,16 +276,25 @@ function main() {
 function startTransfer() {
 	if (mpwd == "")
 		return;
-	httpAsync(
-		"transf",
-		"POST",
-		{
-			Receiving: true,
-			MasterPassword: mpwd,
-			From: document.getElementById("from-ip").value
-		},
-		function(_) {}
-	);
+	let receiving = false;
+	
+	alert("aa");
+	
+	if (document.getElementById("from-ip").value != "")
+	     receiving = true;
+						
+    	httpAsync(
+   		"transf/",
+   		"POST",
+   		{
+  			Receiving: receiving,
+  			MasterPassword: mpwd,
+  			From: document.getElementById("from-ip").value
+   		},
+   		function(_) {
+   		     console.log("recieving started!!");
+   		}
+    	);
 }
 
 // End transferring
